@@ -20,7 +20,10 @@ This script requires the path to an **input txt file** containing the following 
 
 ### Running the script:
 
-Run: <!-- python3 Mutator.VB.py -->
+Run: 
+```bash
+python3 Mutator.VB.py
+```
 
 ### Output:
 
