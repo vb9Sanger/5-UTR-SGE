@@ -6,7 +6,7 @@
 
 ### Requirements:
 
-* [Mutator.VB.py](https://github.com/vb9Sanger/5-UTR/blob/main/Mutator.VB.py)
+* [Mutator.VB.py](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/Mutator.VB.py)
 * an **input txt file** containing the following tab-delimited columns:
   1. library identifier
   2. Forward TWIST primer (target-specific)
@@ -45,12 +45,12 @@ The oligos contained in the output txt file need to be de-duplicated and supplem
 
 ### Requirements:
 
-* [irods_to_lustre_bystudy_id.sh](https://github.com/vb9Sanger/5-UTR/blob/main/irods_to_lustre_bystudy_id.sh)
-* [irods_to_lustre.sh](https://github.com/vb9Sanger/5-UTR/blob/main/irods_to_lustre.sh)
+* [irods_to_lustre_bystudy_id.sh](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/irods_to_lustre_bystudy_id.sh)
+* [irods_to_lustre.sh](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/irods_to_lustre.sh)
 
 ### Running the script:
 
-First, edit [irods_to_lustre_bystudy_id.sh](https://github.com/vb9Sanger/5-UTR/blob/main/irods_to_lustre_bystudy_id.sh) to contain the correct study ID and path to working directory. 
+First, edit [irods_to_lustre_bystudy_id.sh](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/irods_to_lustre_bystudy_id.sh) to contain the correct study ID and path to working directory. 
 
 Then, run: 
 ```bash
@@ -77,7 +77,7 @@ Output fastq files will be used for QC analysis.
 ### Requirements:
 
 * raw fastq file 
-* [subsample.sh](https://github.com/vb9Sanger/5-UTR/blob/main/subsample.sh)
+* [subsample.sh](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/subsample.sh)
 
 ### Running the script:
 
@@ -95,11 +95,11 @@ This will create a subdirectory called 'subsampled' containing new fastq files w
 
 ### Requirements:
 
-* [demultiplex_UTR.txt](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex_UTR.txt) manifest file 
-* [demultiplex_demultiplex_trim.sh](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex_demultiplex_trim.sh)
-* [demultiplex.sh](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex.sh)
-* [counting_extract_count.sh](https://github.com/vb9Sanger/5-UTR/blob/main/counting_extract_count.sh)
-* [count.sh](https://github.com/vb9Sanger/5-UTR/blob/main/count.sh)
+* [demultiplex_UTR.txt](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/demultiplex_UTR.txt) manifest file 
+* [demultiplex_demultiplex_trim.sh](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/demultiplex_demultiplex_trim.sh)
+* [demultiplex.sh](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/demultiplex.sh)
+* [counting_extract_count.sh](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/counting_extract_count.sh)
+* [count.sh](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/count.sh)
 
 ### See:
 
@@ -107,7 +107,7 @@ Hong Kee's [sge-fastq-to-count](https://gitlab.internal.sanger.ac.uk/hk5/sge-fas
 
 ### Running the script:
 
-Step 1: Edit [demultiplex_UTR.txt](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex_UTR.txt) manifest file in excel to contain correct sample name, working directory, path to Read1, exon identifier, and correct F/R TWIST primer sequences.  
+Step 1: Edit [demultiplex_UTR.txt](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/demultiplex_UTR.txt) manifest file in excel to contain correct sample name, working directory, path to Read1, exon identifier, and correct F/R TWIST primer sequences.  
 
 Then, run:
 
@@ -137,7 +137,7 @@ This should generate 'trim', 'log', 'extracted', 'tempo' and 'count' folders, wh
 ### Requirements:
 
 * **all_count.txt** file(s) generated in STEP THREE
-* [process_counts.py](https://github.com/vb9Sanger/5-UTR/blob/main/process_counts.py)
+* [process_counts.py](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/process_counts.py)
 * unique_trimmed.txt file(s) containing trimmed (F and R TWIST primers removed) deisgned oligos corresponding to a single library
 
 ### Running the script:
@@ -162,13 +162,13 @@ Run:
 1. **Total read counts**
 2. **Proportion of subsampled reads that passed STEP THREE (Accepted reads)**
 
-Requirement: [accepted_reads.R](https://github.com/vb9Sanger/5-UTR/blob/main/accepted_reads.R)
+Requirement: [accepted_reads.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/accepted_reads.R)
 
 3. **Read length distribution (of subsampled reads)**
 
 Requirement: 
-* [length_distribution.py](https://github.com/vb9Sanger/5-UTR/blob/main/length_distribution.py)
-* [length_distribution.R](https://github.com/vb9Sanger/5-UTR/blob/main/length_distribution.R)
+* [length_distribution.py](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/length_distribution.py)
+* [length_distribution.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/length_distribution.R)
 
 Run: 
 ```bash
@@ -181,13 +181,13 @@ Then create corresponding histogram in R.
 4. **Missing library sequences**
 5. **Proportion of subsampled reads that map to designed oligos (Mapped reads)**
 
-Requirement: [mapped_reads.R](https://github.com/vb9Sanger/5-UTR/blob/main/mapped_reads.R)
+Requirement: [mapped_reads.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/mapped_reads.R)
 
 6. **Genomic Coverage**
 
 Requirement: 
-* [positions.py](https://github.com/vb9Sanger/5-UTR/blob/main/positions.py)
-* [genomic_coverage.R](https://github.com/vb9Sanger/5-UTR/blob/main/genomic_coverage.R)
+* [positions.py](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/positions.py)
+* [genomic_coverage.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/genomic_coverage.R)
 
 Run: 
 ```bash
