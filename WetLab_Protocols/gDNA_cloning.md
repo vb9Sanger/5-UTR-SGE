@@ -26,8 +26,21 @@
 
 
 ## Transformation: 
-* Transform into NEB-10beta competent E. coli
-* Add 2ul of ligation mix to 50ul cells
+
+1. Thaw a tube of NEB 10-beta E.coli cells on ice
+2. Add 2ul plasmid DNA to 50ul of cells
+3. Flick 4-5x to mix
+4. Place mix on ice for 30min
+5. Heat shock at 42C for 30sec
+6. Place on ice for 5min
+7. Pipette 950ul of RT outgrowth medium into mix
+8. Place at 37C for 60min and shake at 250rpm
+9. Warm plates to 37C
+10. Mix cells thoroughly by flicking / inverting
+11. Spread 1 plate with 40ul of mix, and another with 400ul evenly
+12. Incubate overnight at 37C
+
+### Notes:  
 * Protocol according to manufacturer’s protocols 
 
 ## MiniPrep: (QIAGEN - Cat. No. 28106)
