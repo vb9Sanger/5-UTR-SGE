@@ -159,11 +159,16 @@ Run:
 --- 
 ### **STEP FIVE:** Conduct independent QC Analysis assessing:
 
-1. Total read counts
-2. Proportion of subsampled reads that passed STEP THREE (Accepted reads)
-3. Read length distribution (of subsampled reads)
+1. **Total read counts**
+2. **Proportion of subsampled reads that passed STEP THREE (Accepted reads)**
 
-Requirement: [length_distribution.py](https://github.com/vb9Sanger/5-UTR/blob/main/length_distribution.py)
+Requirement: [accepted_reads.R](https://github.com/vb9Sanger/5-UTR/blob/main/accepted_reads.R)
+
+3. **Read length distribution (of subsampled reads)**
+
+Requirement: 
+* [length_distribution.py](https://github.com/vb9Sanger/5-UTR/blob/main/length_distribution.py)
+* [length_distribution.R](https://github.com/vb9Sanger/5-UTR/blob/main/length_distribution.R)
 
 Run: 
 ```bash
@@ -171,11 +176,18 @@ Run:
 ```
 Output: **length_count.txt**
 
-4. Missing library sequences
-5. Proportion of subsampled reads that map to designed oligos (Mapped reads)
-6. Genomic Coverage 
+Then create corresponding histogram in R.
 
-Requirement: [positions.py](https://github.com/vb9Sanger/5-UTR/blob/main/positions.py)
+4. **Missing library sequences**
+5. **Proportion of subsampled reads that map to designed oligos (Mapped reads)**
+
+Requirement: [mapped_reads.R](https://github.com/vb9Sanger/5-UTR/blob/main/mapped_reads.R)
+
+6. **Genomic Coverage**
+
+Requirement: 
+* [positions.py](https://github.com/vb9Sanger/5-UTR/blob/main/positions.py)
+* [genomic_coverage.R](https://github.com/vb9Sanger/5-UTR/blob/main/genomic_coverage.R)
 
 Run: 
 ```bash
