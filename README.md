@@ -1,12 +1,13 @@
-# 5-UTR-SGE-Pilot
+# 5'UTR SGE Pilot
 
 ## HDR Oligo Design 
 
-**STEP ONE:** design HDR oligo libraries using [Mutator.VB.py](https://github.com/vb9Sanger/5-UTR/blob/main/Mutator.VB.py)
+### **STEP ONE:** design HDR oligo libraries 
 
 ### Requirements:
 
-This script requires the path to an **input txt file** containing the following tab-delimited columns:
+* [Mutator.VB.py](https://github.com/vb9Sanger/5-UTR/blob/main/Mutator.VB.py)
+* an **input txt file** containing the following tab-delimited columns:
   1. library identifier
   2. Forward TWIST primer (target-specific)
   3. mutated region (target-specific, containing PAM edits and Hap1 background variants)
@@ -33,18 +34,19 @@ The output will be a txt file corresponding to the unique library identifier, ta
 
 ### Notes:
 
-The oligos contained in the output txt file need to be de-duplicated and supplemented with additional oligos not coded for in this script (for example, custom clinical indels, uorf-disrupting variants, back-up gRNA oligos)
+The oligos contained in the output txt file need to be de-duplicated and supplemented with additional oligos not coded for in this script (for example, custom clinical indels, uORF-disrupting variants, back-up gRNA oligos), prior to submission for TWIST oligo synthesis. 
 
+--- 
+--- 
 
 ## HDR Library QC
 
-**STEP ONE:** Retreive fastq files from iRODS 
+### **STEP ONE:** Retreive fastq files from iRODS 
 
 ### Requirements:
 
-[irods_to_lustre_bystudy_id.sh](https://github.com/vb9Sanger/5-UTR/blob/main/irods_to_lustre_bystudy_id.sh)
-
-[irods_to_lustre.sh](https://github.com/vb9Sanger/5-UTR/blob/main/irods_to_lustre.sh)
+* [irods_to_lustre_bystudy_id.sh](https://github.com/vb9Sanger/5-UTR/blob/main/irods_to_lustre_bystudy_id.sh)
+* [irods_to_lustre.sh](https://github.com/vb9Sanger/5-UTR/blob/main/irods_to_lustre.sh)
 
 ### Running the script:
 
@@ -62,70 +64,81 @@ Then, run:
 ```bash
 ./irods_to_lustre.sh
 ```
+
 ### Output:
 
-This will generate merged cram files and fastqfiles. 
+This will generate merged cram files and fastq files. 
 
-Output fastqfiles will be used for QC analysis. 
+Output fastq files will be used for QC analysis. 
 
-
-**STEP TWO:** Randomly subsample fastq files to 1M reads 
+--- 
+### **STEP TWO:** Randomly subsample fastq files to 1M reads 
 
 ### Requirements:
 
-raw fastq file 
-
-[subsample.sh](https://github.com/vb9Sanger/5-UTR/blob/main/subsample.sh)
+* raw fastq file 
+* [subsample.sh](https://github.com/vb9Sanger/5-UTR/blob/main/subsample.sh)
 
 ### Running the script:
 
 Run: 
 ```bash
-./subsample.sh input_fastq.qz 
+./subsample.sh raw_fastq.qz 
 ```
+
 ### Output:
  
 This will create a subdirectory called 'subsampled' containing new fastq files with 1M randomly subsampled reads.
 
-
-**STEP THREE:** Generate count data 
+--- 
+### **STEP THREE:** Generate count data 
 
 ### Requirements:
 
-[demultiplex_UTR.txt](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex_UTR.txt) manifest file containing correct sample name(s), working directory, file location, sample specifications and primer sequences (ensure file type is ASCII text using dos2unix) 
-[demultiplex_demultiplex_trim.sh](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex_demultiplex_trim.sh)
-[demultiplex.sh](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex.sh)
-[counting_extract_count.sh](https://github.com/vb9Sanger/5-UTR/blob/main/counting_extract_count.sh)
-[count.sh](https://github.com/vb9Sanger/5-UTR/blob/main/count.sh)
+* [demultiplex_UTR.txt](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex_UTR.txt) manifest file 
+* [demultiplex_demultiplex_trim.sh](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex_demultiplex_trim.sh)
+* [demultiplex.sh](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex.sh)
+* [counting_extract_count.sh](https://github.com/vb9Sanger/5-UTR/blob/main/counting_extract_count.sh)
+* [count.sh](https://github.com/vb9Sanger/5-UTR/blob/main/count.sh)
 
 ### See:
 
-Hong Kee's [sge-fastq-to-count](https://gitlab.internal.sanger.ac.uk/hk5/sge-fastq-to-count/-/tree/main)
+Hong Kee's [sge-fastq-to-count](https://gitlab.internal.sanger.ac.uk/hk5/sge-fastq-to-count/-/tree/main) GitHub Repo.
 
 ### Running the script:
 
-Step 1: Run the bsub demultiplex and trimming.
+Step 1: Edit [demultiplex_UTR.txt](https://github.com/vb9Sanger/5-UTR/blob/main/demultiplex_UTR.txt) manifest file in excel to contain correct sample name, working directory, path to Read1, exon identifier, and correct F/R TWIST primer sequences.  
+
+Then, run:
+
+```bash
+bash dos2unix demultiplex_UTR.txt
+```
+
+Step 2: Run the bsub demultiplex and trimming.
 
 ```bash
 bash demultiplex.sh
 ```
-Step 2: Run the bsub extract counting. Use cutadapt to remove primer and awk to count
+
+Step 3: Run the bsub extract counting. Use cutadapt to remove primer and awk to count.
 
 ```bash
 bash count.sh
 ```
+
 ### Output:
 
-This will generate a 'count' folder containing all_count files needed for QC 
+This should generate 'trim', 'log', 'extracted', 'tempo' and 'count' folders, where the 'count' folder contains **all_count.txt** files needed for QC analysis. 
 
-
-**STEP FOUR:** Assess proportion of reads that map to deigned oligos 
+--- 
+### **STEP FOUR:** Assess proportion of reads that map to deigned oligos 
 
 ### Requirements:
 
-all_count file(s) generated in STEP THREE
-[process_counts.py](https://github.com/vb9Sanger/5-UTR/blob/main/process_counts.py)
-unique_trimmed.txt file(s) containing trimmed (F and R TWIST primers removed) deisgned oligos corresponding to a single library
+* **all_count.txt** file(s) generated in STEP THREE
+* [process_counts.py](https://github.com/vb9Sanger/5-UTR/blob/main/process_counts.py)
+* unique_trimmed.txt file(s) containing trimmed (F and R TWIST primers removed) deisgned oligos corresponding to a single library
 
 ### Running the script:
 
@@ -133,21 +146,40 @@ Run:
 ```bash
 ./process_counts.py unique_trimmed.txt all_count.txt > run1.txt & 
 ```
+
 ### Output:
 
-1. a 'final_counts' folder with FINAL_count.txt files containing all reads that exactly match designed oligos 
-2. an 'error_counts' folder with ERROR_count.txt files containing all reads (that passed QC) and did NOT match any designed oligos 
+1. a 'final_counts' folder with **FINAL_count.txt** files containing all reads that exactly match designed oligos 
+2. an 'error_counts' folder with **ERROR_count.txt** files containing all reads (that passed QC) and did NOT match any designed oligos 
 
-**STEP FIVE:** Conduct independent QC Analysis assessing:
+### Notes:
+
+**unique_trimmed.txt** files were generated by manually editing de-duplicated txt files submitted for TWIST oligo synthesis. 
+
+--- 
+### **STEP FIVE:** Conduct independent QC Analysis assessing:
 
 1. Total read counts
 2. Proportion of subsampled reads that passed STEP THREE (Accepted reads)
 3. Read length distribution (of subsampled reads)
+
+Run: 
+```bash
+./[length_distribution.py](https://github.com/vb9Sanger/5-UTR/blob/main/length_distribution.py) all_count.txt 
+```
+Output: **length_count.txt**
+
 4. Missing library sequences
-5. Proportion of subsampled reass that reads that mapped to designed oligos (Mapped reads)
+5. Proportion of subsampled reads that map to designed oligos (Mapped reads)
 6. Genomic Coverage 
 
+Run: 
+```bash
+./[positions.py](https://github.com/vb9Sanger/5-UTR/blob/main/positions.py) FINAL_count.txt
+```
+Output: **FINAL_count_positions.txt** 
 
+Then, calculate log2(count+1) for each variant in excel and create a plot in R to visualise log2(count+1) variant variant position. All variants for which there is no corresponding position (e.g. whole targeton inversions) were assigned a position of 0.  
 
 
 
