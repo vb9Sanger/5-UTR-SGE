@@ -163,9 +163,11 @@ Run:
 2. Proportion of subsampled reads that passed STEP THREE (Accepted reads)
 3. Read length distribution (of subsampled reads)
 
+Requirement: [length_distribution.py](https://github.com/vb9Sanger/5-UTR/blob/main/length_distribution.py)
+
 Run: 
 ```bash
-./[length_distribution.py](https://github.com/vb9Sanger/5-UTR/blob/main/length_distribution.py) all_count.txt 
+./length_distribution.py all_count.txt 
 ```
 Output: **length_count.txt**
 
@@ -173,9 +175,11 @@ Output: **length_count.txt**
 5. Proportion of subsampled reads that map to designed oligos (Mapped reads)
 6. Genomic Coverage 
 
+Requirement: [positions.py](https://github.com/vb9Sanger/5-UTR/blob/main/positions.py)
+
 Run: 
 ```bash
-./[positions.py](https://github.com/vb9Sanger/5-UTR/blob/main/positions.py) FINAL_count.txt
+./positions.py FINAL_count.txt
 ```
 Output: **FINAL_count_positions.txt** 
 
