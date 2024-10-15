@@ -30,7 +30,7 @@
 * Add 2ul of ligation mix to 50ul cells
 * Protocol according to manufacturer’s protocols 
 
-## MiniPrep:
+## MiniPrep: (QIAGEN - Cat. No. 28106)
 * Create 1:1000 LB:AMP (eg 400ul AMP in 400ml LB broth)
 * Add 3ml of LB + AMP to tubes with clear caps
 * Select a single colony with a P200
@@ -40,10 +40,10 @@
 * Swirl, then add 2ml to a 2ml tube 
 * Miniprep according to manufarturer’s protocol
 
-### Sequencing: 
+### QC Sequencing: 
 * Send samples off for Sanger Sequencing to validate constructs 
 
-## Maxiprep:
+## Maxiprep: (QIAGEN - Cat. No. 12963)
 * Create 1:1000 LB:AMP (eg 400ul AMP in 400ml LB broth)
 * Add 3ml of LB + AMP to tubes with clear caps
 * Select a single colony with a P200 from initial plates
@@ -53,7 +53,7 @@
 * Shake overnight
 * Maxiprep according to manufacturer’s protocols 
 
-### Sequencing: 
+### QC Sequencing: 
 * Send samples off for Sanger Sequencing to validate constructs 
 
 
