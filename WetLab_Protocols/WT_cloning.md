@@ -15,7 +15,7 @@
 1.	Run PCR protocol under Rebecca’s name 
 2.	Run on gel
 3.	Excise bands 
-4.	Gel purify (elute in 12ul EB buffer) 
+4.	[Gel purify](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gel_purification.md) (elute in 12ul EB buffer) 
 5.	Nanodrop 
 
 ### Digest with NotI and SbfI:
@@ -45,7 +45,7 @@
 1.	Keep at 37C for at least 1hr, 80C for 20min
 2.	Run on a 1% gel 
 3.	Excise band 
-4.	Gel purify 
+4.	[Gel purify](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gel_purification.md) (Elute in 12ul EB buffer)
 5.	Nanodrop
 
 
