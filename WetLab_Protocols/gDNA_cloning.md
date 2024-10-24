@@ -44,29 +44,29 @@
 * Protocol according to manufacturer’s protocols 
 
 ## MiniPrep: (QIAGEN - Cat. No. 28106)
-* Create 1:1000 LB:AMP (e.g. 400ul AMP in 400ml LB broth)
-* Add 3ml of LB + AMP to tubes with clear caps
-* Select a single colony with a P200
-* Dump whole tip into tube
-* At end of day, put tubes in shaker overnight at 37C
 
-* Next day: remove tubes from shaker
-* Swirl, then add 2ml to a 2ml tube 
-* Miniprep according to manufarturer’s protocol
+1. Create 1:1000 LB:AMP (e.g. 400ul AMP in 400ml LB broth)
+2. Add 3ml of LB + AMP to tubes with clear caps
+3. Select a single colony with a P200
+4. Dump whole tip into tube
+5. At end of day, put tubes in shaker overnight at 37C
+6. Next day: remove tubes from shaker
+7. Swirl, then add 2ml to a 2ml tube
+8. Miniprep according to manufarturer’s protocol
 
 ### QC Sequencing: 
 * Send samples off for Sanger Sequencing to validate constructs (primer = 598_hU6) 
 
 ## Maxiprep: (QIAGEN - Cat. No. 12963)
-* Create 1:1000 LB:AMP (e.g. 400ul AMP in 400ml LB broth)
-* Add 3ml of LB + AMP to tubes with clear caps
-* Select a single colony with a P200 from initial plates
-* Dump whole tip into tube
-* In the morning: put the tubes in shaker at 37C
-* At the end of the day: Add 300ul of grown up cells to 100ml LB + AMP in 250ml flask
-* Shake overnight
 
-* Next day: Maxiprep according to manufacturer’s protocols 
+1. Create 1:1000 LB:AMP (e.g. 400ul AMP in 400ml LB broth)
+2. Add 3ml of LB + AMP to tubes with clear caps
+3. Select a single colony with a P200 from initial plates
+4. Dump whole tip into tube
+5. In the morning: put the tubes in shaker at 37C
+6. At the end of the day: Add 300ul of grown up cells to 100ml LB + AMP in 250ml flask
+7. Shake overnight
+8. Next day: Maxiprep according to manufacturer’s protocols 
 
 ### QC Sequencing: 
 * Send samples off for Sanger Sequencing to validate constructs (primer = 598_hU6)
