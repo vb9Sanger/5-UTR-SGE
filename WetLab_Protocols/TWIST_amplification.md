@@ -25,6 +25,7 @@ For each 15ul reaction:
 
 ### Notes:
 * This is done using WT constructs that will not be used
+* Ran 4X reactions (15ul each) 
 * Remember to include a negative control
 * Spin plate at 2400rpm for 1min prior to PCR
 
@@ -59,9 +60,9 @@ For each 15ul reaction:
 For each 15ul reaction:
 
 
-| Reagent        | Volume           |
+| Reagent        | Volume (1X)         |
 | ------------- |:-------------:|
-|ssDNA (WT Construct)	|1.25ul across 4.5x Master Mix (0.28ul per rxn)|
+|ssDNA (WT Construct)	|10ng|
 |F TWIST Primer (10uM)	|0.45ul|
 |R TWIST Primer (10uM)	|0.45ul|
 |Kapa Hifi MM	|7.5ul|
@@ -70,6 +71,7 @@ For each 15ul reaction:
 |H2O |	To 15ul|
 
 ### Notes:
+* Ran 4X reactions (15ul each)
 * Remember to include a negative control
 * Spin plate at 2400rpm for 1min
 
@@ -107,30 +109,33 @@ To ensure enough amplified product, 15ul reactions were scaled up to 50ul. For e
 For each 50ul reaction:
 
 
-| Reagent        | Volume           |
+| Reagent        | Volume    (1X)       |
 | ------------- |:-------------:|
-|ssDNA (TWIST oligo pool)	|0.93ul (roughly 4ng/ul)|
+|ssDNA (TWIST oligo pool)	|4ng|
 |F TWIST Primer (10uM)	|1.5ul|
 |R TWIST Primer (10uM)	|1.5ul|
-Kapa HotStart MM	25ul
-Water 	To 50ul total volume 
-Remember to include a negative control 
-Spin plate at 2400rpm for 1min prior to PCR
+|Kapa Hifi MM	|25ul|
+|H2O 	|To 50ul| 
 
-Gradient temp PCR Conditions:
-(Modified version of “kapa grad ill0 grad”
+### Notes:
+* Ran 2X reactions (50ul each)
+* Remember to include a negative control
+* Spin plate at 2400rpm for 1min
 
-95C	3min
-98C	20s
-__*	15s
-72C 	30s
-Cycles 	__*
-72C 	30s
-4C	Forever 
+### Gradient PCR Conditions: 
+(Modified version of “kapa grad ill0 grad”)
+
+| Temperature       | Duration           |
+| ------------- |:-------------:|
+|95C|	3min|
+|98C	|20sec|
+|__C*|	15sec|
+|72C |	30sec|
+|Cycles |	__*|
+|72C |	30s|
+|4C	|Forever|  
 
 *Dependent on step 2
 
-
-
-Notes: 
--	Following true amplification, samples were bioanalysed (to ensure presence of product at expected size) then stored at -80C
+### Notes:
+* Following true amplification, samples were bioanalysed (to ensure presence of product at expected size) then stored at -80C
