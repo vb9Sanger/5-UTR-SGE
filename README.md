@@ -8,7 +8,7 @@
 
 * [Mutator.VB.py](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/Mutator.VB.py)
 * an **input txt file** containing the following tab-delimited columns:
-  1. library identifier
+ 1. library identifier
   2. Forward TWIST primer (target-specific)
   3. mutated region (target-specific, containing PAM edits and Hap1 background variants)
   4. Reverse TWIST primer (target-specific)
