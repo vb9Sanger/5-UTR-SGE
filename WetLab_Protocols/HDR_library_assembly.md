@@ -46,8 +46,9 @@ For each 50ul reaction:
 
 ### Notes: 
 * Any samples deemed poor quality following purification were tossed
-* Remaining samples were merged into one and nanodropped once more 
- 
+* Remaining samples were merged into one and nanodropped once more
+
+--- 
 # TWIST Oligo Purification 
 
 ## Background:
@@ -57,6 +58,7 @@ Whether or not amplified oligos were purified by [PCR purification](https://gith
 * All samples were eluted in 12ul of EB buffer
 * Ideally, should yield between 20-50ng/ul
 
+--- 
 # NEBuilder Assembly of WT Vector and Amplified Oligos 	
 
 ## Background:
