@@ -1,7 +1,9 @@
-# WT Backbone Linearisation 
+# HDR Library Assembly 
+
+## STEP ONE: WT Backbone Linearisation 
 
 
-## Background:
+### Background:
 * Linearised backbone was initially amplified from 50ng of WT Vector. Gibson Assembly of this ligation product demonstrated contamination of uncut vector. Subsequent gradient PCRs testing 0.5ng – 50ng of starting WT Vector were therefore conducted.
 * The above starting concentrations were also tested at both 30 and 35 cycles.
 * Running all samples on a gel to visualise corresponding amounts of uncut vector yielded the following optimised conditions:
@@ -25,7 +27,7 @@ For each 50ul reaction:
 * Remember to include a negative control 
 
 
-## PCR Conditions: 
+### PCR Conditions: 
 
 | Temperature       | Duration           |
 | ------------- |:-------------:|
@@ -49,23 +51,23 @@ For each 50ul reaction:
 * Remaining samples were merged into one and nanodropped once more
 
 --- 
-# TWIST Oligo Purification 
+## STEP TWO: TWIST Oligo Purification 
 
-## Background:
+### Background:
 Whether or not amplified oligos were purified by [PCR purification](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/PCR_purification.md) or [gel purification](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gel_purification.md) was determined based off optimisation experiments and corresponding presence of primer dimers (or lack thereof). If there was concern of primer dimers, oligos were purified by gel purification. Otherwise, oligos were purified by PCR purification (according to manufacturer’s protocol).
 
-## Notes:
+### Notes:
 * All samples were eluted in 12ul of EB buffer
 * Ideally, should yield between 20-50ng/ul
 
 --- 
-# NEBuilder Assembly of WT Vector and Amplified Oligos 	
+## STEP THREE: NEBuilder Assembly of WT Vector and Amplified Oligos 	
 
-## Background:
+### Background:
 Selection of NEBuilder (vs Gibson), starting amount of ligation mix added to each transformation and volume of NEB-5 alpha cells used in each transformation were the result of a series of optimisation experiments. 
 	NEBioCalculator was used to calculate starting amounts of WT Vector and insert for all ligations, where a 1:2 ratio of vector to insert was recommended for assembly of 2 fragments.
 
-## Ligations:
+### Ligations:
 
 For each 20ul reaction:
 
@@ -77,7 +79,7 @@ For each 20ul reaction:
 |H2O| 	To 20ul| 
 *Corresponding volume calculated with NEBioCalculator 
 
-## PCR Conditions: 
+### PCR Conditions: 
 
 | Temperature       | Duration           |
 | ------------- |:-------------:|
@@ -85,7 +87,7 @@ For each 20ul reaction:
 |4C	|Forever |
 
 
-## Transformations:
+### Transformations:
 
 1. Thaw a tube of NEB 10-alpha E.coli cells on ice
 2. Create the following transformations:
