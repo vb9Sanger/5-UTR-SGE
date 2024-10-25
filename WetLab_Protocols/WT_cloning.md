@@ -107,7 +107,7 @@
 | H2O	| to 20ul |
 * 37C for 1hr
 
-# Notes:
+### Notes:
 * NspI selected based off of expexted band patterns on simulated Snapgene gel
 * Looked for RE that would produce identifiable band patterns for all samples 
 
