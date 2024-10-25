@@ -51,7 +51,7 @@ For each 15ul reaction:
     * Remember two adjacent wells have the same temp, so load every other well (e.g. B2, B4, B6, B8...)
     * Avoid bubbles when dyes are being used 
 
-### Assess MC plot to confirm amplification 
+2. Assess MC plot to confirm amplification 
 
 ## STEP TWO: Optimisation qPCRs on oligo pools 
 
@@ -92,7 +92,7 @@ For each 15ul reaction:
 * I performed four reactions across four temperatures between 55C and 63C. (I selected 55C, 57C, 59C and 61C)
 * Hong Kee selected 57C, 59C, 61C, 63C. Retrospectively, I would select the latter.
 
-### Assess MC plot to confirm amplification 
+2. Assess MC plot to confirm amplification 
 
 ### Notes:
 * I selected optimal annealing temp by assessing which sample (if any) demonstrated specific product at an early cycle number. If no difference, selected 60C.
