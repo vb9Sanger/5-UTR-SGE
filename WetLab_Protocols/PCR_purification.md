@@ -16,7 +16,7 @@
 8. Discard flow-through 
 9.	Centrifuge again at top speed for 2min to remove residual wash buffer
 10.	Remove ethanol from o-ring then place column in fresh 1.5ml tube 
-11.	Add 12ul of EB Buffer to column
+11.	Add desired volume of EB Buffer to column
 12. Let stand for 2min
 13.	Centrifuge top speed for 1min 
 14.	Nanodrop 
