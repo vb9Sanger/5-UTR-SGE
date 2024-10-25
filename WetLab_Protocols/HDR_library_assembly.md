@@ -85,19 +85,28 @@ For each 20ul reaction:
 
 ## Transformations:
 
-1. Create the following transformations:
+1. Thaw a tube of NEB 10-alpha E.coli cells on ice
+2. Create the following transformations:
 * 8ul of vector + insert ligation in 200ul of NEB-5 alpha cells (2X)
 * 2ul of vector + insert ligation in 50ul of NEB-5 alpha cells
 * 2ul of vector alone + NEBuilder in 50ul of NEB-5 alpha cells
-* 2ul of vector alone without NEBuilder in 50ul of NEB-5 alpha cells 
-
-2. Following incubation, plate out 20ul of all transformations and incubated at 37C overnight
-3. Merge remaining volumes from 200ul vector + insert transformations
-4. Add this to 150ul of fresh LB+Amp and leave to shake (220rpm) overnight at 37C
-5. The next day: calculate CFUs for all transformations using the following formula:
+* 2ul of vector alone without NEBuilder in 50ul of NEB-5 alpha cells
+3. Flick 4-5x to mix
+4. Place mix on ice for 30min
+5. Heat shock at 42C for exactly 30sec
+6. Place on ice for 2min
+7. Pipette 950ul of SOC into mix
+8. Place at 37C for 60min and shake at 650rpm
+9. Warm plates to 37C
+10. Mix cells thoroughly by flicking / inverting
+11. Following incubation, plate out 20ul of all transformations
+12. Incubate plates at 37C overnight
+13. Merge remaining volumes from 200ul vector + insert transformations
+14. Add this to 150ul of fresh LB+Amp and leave to shake (220rpm)
+15. Incubate at 37C for 14h (overnight)
+16. The next day: create cell pellets and calculate CFUs for all transformations using the following formula:
 
 ***count of colonies per plate x  (total volume of transformation)/(volume of transformation plated)=CFUs***
-
 	
  ### Notes:
 * For all transformations, the following controls were included:
