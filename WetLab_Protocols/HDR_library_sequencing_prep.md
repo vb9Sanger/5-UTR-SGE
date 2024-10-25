@@ -5,6 +5,7 @@
 ### Notes:
 * Maxiprep plasmid libraries according to manufacturer’s protocols
 * Create two sequential elutions in 200ul EB buffer
+--- 
 
 ## STEP TWO: Test ILL1 qPCR
 
@@ -41,6 +42,7 @@ For each 50ul Reaction:
 ### Notes: 
 * Analyse MC plots for each targeton to select optimal temperature and cycle number 
 
+--- 
 ## Step THREE: True ILL1 qPCR
  	
 For each 50ul Reaction:
@@ -58,7 +60,6 @@ For each 50ul Reaction:
 ### Notes: 
 * Make up enough master mix for 6 reactions (4x 50ul reactions + another 50uL reaction with Evagreen to trace the amplification with qPCR machine).
 
-
 ### PCR Conditions:
 
 | Temperature       | Duration           |
@@ -74,7 +75,7 @@ For each 50ul Reaction:
 ### Notes: 
 * Analyse MC plots for each targeton to select optimal temperature and cycle number 
 
-
+--- 
 ## STEP FOUR: PCR purification 
 
 1. Merge 4x reactions into one Eppendorf tube.
@@ -86,7 +87,7 @@ For each 50ul Reaction:
 6. Nanodrop.
 7. Qubit. 
 
-
+--- 
 ## STEP FIVE: ILL2-PCR
 
 ### Background:
@@ -101,7 +102,6 @@ For each 100ul Reaction:
 |Kapa Hifi MM	|50ul|
 |H2O| 	To 100ul | 
 
-
 ### PCR Conditions:
 
 | Temperature       | Duration           |
@@ -114,7 +114,7 @@ For each 100ul Reaction:
 |72C| 	30s|
 |4C	|Forever |
 
-
+--- 
 ## STEP SIX: Ampure bead purification and pooling
 1. [Bead purify](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/bead_purification.md) ILL2 pcr product on magnetic rack
 2. Qubit.
