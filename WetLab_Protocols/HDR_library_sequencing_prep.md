@@ -116,7 +116,7 @@ For each 100ul Reaction:
 
 
 ## STEP SIX: Ampure bead purification and pooling
-1. Bead purify ILL2 pcr product on magnetic rack
+1. [Bead purify](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/bead_purification.md) ILL2 pcr product on magnetic rack
 2. Qubit.
 3. Normalise samples to 20ul of 10ng/ul in EB Buffer
 4. Use 10uL of the diluted library for 1% gel electrophoresis. 
