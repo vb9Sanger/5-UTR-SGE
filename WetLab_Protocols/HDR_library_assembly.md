@@ -51,7 +51,7 @@ For each 50ul reaction:
 # TWIST Oligo Purification 
 
 ## Background:
-Whether or not amplified oligos were purified by PCR purification or [gel purification](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gel_purification.md) was determined based off optimisation experiments and corresponding presence of primer dimers (or lack thereof). If there was concern of primer dimers, oligos were purified by gel purification. Otherwise, oligos were purified by PCR purification (according to manufacturer’s protocol).
+Whether or not amplified oligos were purified by [PCR purification](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/PCR_purification.md) or [gel purification](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gel_purification.md) was determined based off optimisation experiments and corresponding presence of primer dimers (or lack thereof). If there was concern of primer dimers, oligos were purified by gel purification. Otherwise, oligos were purified by PCR purification (according to manufacturer’s protocol).
 
 ## Notes:
 * All samples were eluted in 12ul of EB buffer
