@@ -78,7 +78,7 @@ For each 50ul Reaction:
 ## STEP FOUR: PCR purification 
 
 1. Merge 4x reactions into one Eppendorf tube.
-2. [PCR Purify](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/PCR_purification.md) the reaction through Qiagen PCR column (not minelute).
+2. [PCR purify](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/PCR_purification.md) the reaction through Qiagen PCR column (not minelute).
   * Elute DNA in 30ul of EB buffer for each column
 3. Nanodrop.
 4. Qubit. dsDNA HS kit.
