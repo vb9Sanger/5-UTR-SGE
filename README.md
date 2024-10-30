@@ -39,6 +39,46 @@ The oligos contained in the output txt file need to be de-duplicated and supplem
 --- 
 --- 
 
+## Guide RNA Cloning 
+
+### Requirements:
+
+* [gDNA cloning protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gDNA_cloning.md)
+
+--- 
+
+## WT Cloning 
+
+### Requirements: 
+
+* [WT cloning protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/WT_cloning.md)
+* [gel purification protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gel_purification.md) 
+
+--- 
+
+## HDR Library Assembly 
+
+### Requirements: 
+
+* [HDR Library Assembly protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/HDR_library_assembly.md)
+* [gel purification protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gel_purification.md)
+* [PCR purification protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/PCR_purification.md)
+
+--- 
+
+## HDR Library Sequencing Prep (NovaSeq)
+
+### Requirements: 
+
+* [HDR Library Sequencing Prep protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/HDR_library_sequencing_prep.md)
+* [PCR purification protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/PCR_purification.md)
+* [bead purification protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/bead_purification.md)
+
+### Notes: 
+* samples are then submitted for KAPA Library Quantification and NovaSeq
+  
+--- 
+--- 
 ## HDR Library QC
 
 ### **STEP ONE:** Retreive fastq files from iRODS 
@@ -179,9 +219,12 @@ Output: **length_count.txt**
 Then create corresponding histogram in R.
 
 4. **Missing library sequences**
+* Pass criterion: less than 1% of expected variants are missing
+  
 5. **Proportion of subsampled reads that map to designed oligos (Mapped reads)**
 
 Requirement: [mapped_reads.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/mapped_reads.R)
+* Pass criterion: more than 40% of accepted reads map to library reads
 
 6. **Genomic Coverage**
 
@@ -196,7 +239,16 @@ Run:
 Output: **FINAL_count_positions.txt** 
 
 Then, calculate log2(count+1) for each variant in excel and create a plot in R to visualise log2(count+1) variant variant position. All variants for which there is no corresponding position (e.g. whole targeton inversions) were assigned a position of 0.  
+* distribution of variants should appear relatively tight
+  
+### Notes: 
 
+* If libraries pass QC, OK to continue to Screening.
+--- 
+--- 
+## SGE Screening 
+
+### **STEP ONE:** 
 
 
 
