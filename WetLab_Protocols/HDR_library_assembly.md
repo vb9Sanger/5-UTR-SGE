@@ -77,6 +77,7 @@ For each 20ul reaction:
 |Purified insert |	*|
 |NEBuilder |	10ul|
 |H2O| 	To 20ul| 
+
 *Corresponding volume calculated with NEBioCalculator 
 
 ### PCR Conditions: 
