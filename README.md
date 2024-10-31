@@ -269,7 +269,13 @@ This set of protocols follows a No-weekend protocol following the schedule speci
 
 --- 
 
+## NGS Library Prep (gDNA) 
 
+### Requirements:
+* [NGS library prep - gDNA protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/NGS_library_prep_gDNA.md)
+
+--- 
+--- 
 
   
 
