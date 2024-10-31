@@ -259,9 +259,15 @@ This set of protocols follows a No-weekend protocol following the schedule speci
 * [SGE screening protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/SGE_screening.md) 
 
 --- 
+## gDNA Extraction 
+
+### Requirements:
+* [gDNA extraction protocol](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/WetLab_Protocols/gDNA_extraction.md)
+
+### Notes:
+* Where applicable, do not extract DNA from all pellets corresponding to a single replicate and timepoint at once
+
 --- 
-
-
 
 
 
