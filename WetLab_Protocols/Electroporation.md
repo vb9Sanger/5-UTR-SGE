@@ -13,8 +13,8 @@ Guide/library plasmids
 Sterile 1.5ml Eppendorf tubes (on desk beside malin’s)
 
 ### Notes: 
-Do not use any antibiotics in the media during the electroporation (pen/strep, blasticidin, etc)!
-On D0, you should have at least 10x T150s grown to ~60-70% confluency PER TARGETON
+* Do not use any antibiotics in the media during the electroporation (pen/strep, blasticidin, etc)!
+* On D0, you should have at least 10x T150s grown to ~60-70% confluency PER TARGETON
 
 1.	Wash cells with PBS (T150 = 10ml)
 2.	Add trypLE to labware and incubate for 3 minutes @37C (for T150 = 3ml)
@@ -37,8 +37,8 @@ On D0, you should have at least 10x T150s grown to ~60-70% confluency PER TARGET
 | 4 replicates (* 4.5) | 12.15ug	|23.85ug|	450ng|
 | 3 replicates GFP only (* 3.5) | -	|-|	28ug|
 
-### Note: 
-transfection efficiency might be reduced if the DNA amount is above 10% of the reaction volume (10ul per replicate, or 45ul for 4.5). Ensure amount of guide + library per replicate is less than 15% total volume (150ul). If it does, you should consider concentrating your plasmids.
+### Notes: 
+* Transfection efficiency might be reduced if the DNA amount is above 10% of the reaction volume (10ul per replicate, or 45ul for 4.5). Ensure amount of guide + library per replicate is less than 15% total volume (150ul). If it does, you should consider concentrating your plasmids.
 
 12.	Set up the pipetting station inside the hood and turn on the computer unit (off switch on the back). The grey connector cable should be unplugged and MUST be inserted with arrow marking facing UP. The right-hand side of the touch screen (after turning on and pressing quick run to open the experiment set up screen) should show that the pipette unit is connected with an empty circle when this is done correctly.
 13.	Add 2ml of Buffer E/electrode buffer to the Neon tube and insert into the Electroporation station. (Ensure cathode faces the back). You should hear a click when it’s correctly in place.
@@ -56,4 +56,4 @@ transfection efficiency might be reduced if the DNA amount is above 10% of the r
 25.	OPTIONAL STEP: if non-puro treated samples are required (e.g. for GFP FACS) you can remove 0.5-1ml of the suspension from the mixed flask and plate in a multiwell dish. This sample can then be grown/treated independently of the screening replicate.
 
 ### Note:
-Remember to seed a puromycin kill control. This can be GFP-only EP cells, or leftover Hap1 cells. 
+* Remember to seed a puromycin kill control. This can be GFP-only EP cells, or leftover Hap1 cells. 
