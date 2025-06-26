@@ -10,7 +10,10 @@
 | H20 | 	42ul  | 
 
 ### PCR conditions 
-"anneal" protocol in old PCR machine 
+Heat to 95°C for 5 minutes.
+Slowly cool to room temperature (~25°C) over 30–60 minutes, or:
+Ramp down from 95°C to 25°C at 0.1°C/sec using a thermocycler.
+Store at –20°C until use.
 
 ## Ligation:
 
@@ -22,6 +25,7 @@
 | H20 | 	to 10ul  | 
 
 ### Notes:
+* Cut vector = pMin plasmid digested with BbsI restriction enzyme (NEB)
 * Ligate for 1-6h 
 
 
