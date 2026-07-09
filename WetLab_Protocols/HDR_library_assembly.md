@@ -90,7 +90,7 @@ For each 20ul reaction:
 
 ### Transformations:
 
-1. Thaw a tube of NEB 10-alpha E.coli cells on ice
+1. Thaw a tube of NEB 5-alpha E.coli cells on ice
 2. Create the following transformations:
 * 8ul of vector + insert ligation in 200ul of NEB-5 alpha cells (2X)
 * 2ul of vector + insert ligation in 50ul of NEB-5 alpha cells
