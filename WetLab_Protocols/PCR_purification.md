@@ -1,4 +1,4 @@
-# PCR Purification:
+# PCR Purification (Catalog No. 28004):
 
 ### Notes:
 * For Minelute PCR purification (of amplified TWIST olgios), use refirigerated columns
