@@ -1,4 +1,4 @@
-# Gel Purification:
+# Gel Purification (Cat No. 28704):
 
 1. Excise bands from gel
 2. Weigh gel slice in 1.5ml tube
