@@ -1,8 +1,8 @@
-# PCR Purification (Catalog No. 28004):
+# PCR Purification:
 
 ### Notes:
-* For Minelute PCR purification (of amplified TWIST olgios), use refirigerated columns
-* For PCR purification of ILL1 DNA, use columns from kit
+* For Minelute PCR purification (of amplified TWIST olgios), use refirigerated columns (Cat No. 28004)
+* For PCR purification of ILL1 DNA, use columns from kit (Cat No. 28106)
 
 ### Protocol: 
 1.	Add 5 volumes of Buffer PB to 1 volume of PCR Reaction and mix (e.g. 50ul Rxn = 250ul Buffer PB)
