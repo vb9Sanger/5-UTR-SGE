@@ -47,7 +47,7 @@ Store at –20°C until use.
 ### Notes:  
 * Protocol according to manufacturer’s protocols 
 
-## MiniPrep: (QIAGEN - Cat. No. 28106)
+## MiniPrep: (QIAGEN - Cat. No. 27106)
 
 1. Create 1:1000 LB:AMP (e.g. 400ul AMP in 400ml LB broth)
 2. Add 3ml of LB + AMP to tubes with clear caps
