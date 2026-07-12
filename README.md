@@ -489,6 +489,7 @@ Rscript Code/extract_single_guide.R -f SON/Plasmid_ref/sg10/output/experiment_qc
 #### Notes:
 * Both scripts exclude variants with `consequence` of `"Others"` or `"Backup_gRNA"` before output.
 * Both scripts support `--help` for the full built-in usage message.
+* For `--mode positional`, both scripts use `pos_total_se_raw`/`pos_total_se_shrunk` as the SE column, falling back to `lfcSE_raw`/`lfcSE_shrunk` (with a warning) if those aren't present in the input (e.g. outputs generated before `pos_total_se_*` was added). For `--mode adjusted`, `lfcSE_raw`/`lfcSE_shrunk` is always used.
 
 --- 
 ### STEP SEVEN: Fit a Gaussian Mixture Model — [gmm.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/gmm.R)
