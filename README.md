@@ -491,7 +491,7 @@ Rscript Code/extract_single_guide.R -f SON/Plasmid_ref/sg10/output/experiment_qc
 * Both scripts support `--help` for the full built-in usage message.
 
 --- 
-### STEP SEVEN: Fit a Gaussian Mixture Model — `gmm.R`
+### STEP SEVEN: Fit a Gaussian Mixture Model — [gmm.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/gmm.R)
 
 #### Background:
 Fits a 2-component Gaussian Mixture Model (via `mclust`) to the combined or extracted LFC values from STEP SIX, to classify variants as **depleted** or **no impact** (enriched variants are left unchanged).
@@ -499,6 +499,7 @@ Fits a 2-component Gaussian Mixture Model (via `mclust`) to the combined or extr
 #### Requirements:
 * R packages: `data.table`, `mclust`, `ggplot2`, `ragg`
 * the combined (`merge_and_combine.R`) or extracted (`extract_single_guide.R`) output TSV from STEP SIX
+* [gmm.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/gmm.R)
 
 | Flag | Required? | Description |
 | :--- | :--- | :--- |
@@ -522,5 +523,3 @@ Rscript Code/gmm.R -f SLC2A1/D4_ref/merged_positional/SLC2A1_merged_positional_D
 * The model is fit only on variants with a status of `depleted` or `no impact`; `enriched` variants are excluded from fitting and left unchanged.
 * The number of components (`G`) is fixed at 2 and is not user-configurable.
 * Any variant whose fitted component would be labelled "depleted" but which has a positive LFC is automatically reassigned to "no impact" (flagged via `GMM_sign_override`), since a positive LFC cannot represent depletion.
-
-
