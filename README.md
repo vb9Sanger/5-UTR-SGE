@@ -492,7 +492,7 @@ Rscript Code/extract_single_guide.R -f SON/Plasmid_ref/sg10/output/experiment_qc
 * For `--mode positional`, both scripts use `pos_total_se_raw`/`pos_total_se_shrunk` as the SE column, falling back to `lfcSE_raw`/`lfcSE_shrunk` (with a warning) if those aren't present in the input (e.g. outputs generated before `pos_total_se_*` was added). For `--mode adjusted`, `lfcSE_raw`/`lfcSE_shrunk` is always used.
 
 --- 
-### STEP SEVEN: Fit a Gaussian Mixture Model — [gmm.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/gmm.R)
+### STEP SEVEN: Fit a Gaussian Mixture Model
 
 #### Background:
 Fits a 2-component Gaussian Mixture Model (via `mclust`) to the combined or extracted LFC values from STEP SIX, to classify variants as **depleted** or **no impact** (enriched variants are left unchanged).
@@ -524,3 +524,63 @@ Rscript Code/gmm.R -f SLC2A1/D4_ref/merged_positional/SLC2A1_merged_positional_D
 * The model is fit only on variants with a status of `depleted` or `no impact`; `enriched` variants are excluded from fitting and left unchanged.
 * The number of components (`G`) is fixed at 2 and is not user-configurable.
 * Any variant whose fitted component would be labelled "depleted" but which has a positive LFC is automatically reassigned to "no impact" (flagged via `GMM_sign_override`), since a positive LFC cannot represent depletion.
+
+--- 
+### STEP EIGHT: Signal-to-noise QC across genes/conditions 
+
+#### Background:
+Reports per-file signal-to-noise QC metrics (median |Z|, % controls significant, Cohen's d between signal and control consequence sets) across all `*_with_GMM.tsv` outputs from STEP SEVEN, combined into a single table so gene x condition combinations (e.g. `Day4_positional`, `Day4_adjusted`, `Plasmid_positional`) can be compared by eye. There is deliberately **no automatic composite score or ranking** — a hierarchical rank across adjusted vs positional metrics isn't a fair like-for-like comparison, so manual inspection of the combined table/plot is intended instead.
+
+Gene, reference (Day4/Plasmid) and metric (positional/adjusted) are auto-inferred per file from the filename/path (not passed via a single global flag, since one run compares all conditions together), and can be overridden per file or per gene via `--manifest`.
+
+#### Requirements:
+* R packages: `data.table`, `ggplot2`, `optparse`
+* `*_with_GMM.tsv` output file(s) from STEP SEVEN, each containing a `consequence` column
+* [signal_to_noise.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/signal_to_noise.R)
+
+| Flag | Required? | Description |
+| :--- | :--- | :--- |
+| `-i, --input <pattern>` | Yes | Input file glob, e.g. `"*_with_GMM.tsv"`. Everything before the first wildcard is treated as a base directory; the final path segment is matched **recursively at any depth** beneath it, so files at different folder depths are all picked up without needing repeated `*/*/*` segments |
+| `-o, --out_prefix <prefix>` | No | Output prefix (default: `signal_noise`) |
+| `--manifest <file.tsv>` | No | TSV overriding auto-detected metadata. Match by `file` (specific file, by path or basename) and/or `gene` (applies to *all* of that gene's files at once). Optional columns: `gene`, `ref`, `metric`, `control_set`, `signal_set` (comma-separated consequence labels) |
+| `--dry_run` | No | Print the inferred `(gene, ref, metric, condition)` per file and exit, without computing any metrics — use this first to check the auto-detected parsing |
+| `--gene_regex <regex>` | No | Regex with 1 capture group to extract the gene name from the filename (overrides default prefix-based logic) |
+| `--ref_day4_regex <regex>` | No | Regex matched against the full path to detect the Day4 reference (default: `day4|d4`) |
+| `--ref_plasmid_regex <regex>` | No | Regex matched against the full path to detect the Plasmid reference (default: `plasmid`) |
+| `--metric_positional_regex <regex>` | No | Regex matched against the filename to detect the positional metric (default: `positional`) |
+| `--metric_adjusted_regex <regex>` | No | Regex matched against the filename to detect the adjusted metric (default: `adjusted`) |
+| `--control <labels>` | No | Comma-separated neutral/control `consequence` labels; global default, override per-gene via `--manifest` (default: `SNV`) |
+| `--signal <labels>` | No | Comma-separated signal `consequence` labels used for Cohen's d; global default, override per-gene via `--manifest` (default: `LOF`) |
+| `--fdr_cutoff <double>` | No | FDR cutoff used as a fallback significance call if no status column is available (default: `0.05`) |
+| `--min_n_for_d <int>` | No | Minimum n per group required to compute Cohen's d (default: `10`) |
+
+Run (check parsing first):
+```bash
+Rscript Code/signal_to_noise.R --input "*_with_GMM.tsv" --dry_run
+```
+
+Run (example):
+```bash
+Rscript Code/signal_to_noise.R --input "*_with_GMM.tsv" --out_prefix out/utr_signal_noise --control "SNV" --signal "LOF"
+```
+
+Run (with a per-gene override, e.g. for a gene with no `LOF`-labelled variants):
+```bash
+Rscript Code/signal_to_noise.R --input "*_with_GMM.tsv" --manifest ctcf_override.tsv --out_prefix out/utr_signal_noise --control "SNV" --signal "LOF"
+```
+*where `ctcf_override.tsv` contains, e.g.:*
+```
+gene	signal_set
+CTCF	START_Insertion
+```
+
+#### Output:
+* `<out_prefix>.metrics.tsv` — one row per gene x condition, with: `targeton`, `condition`, `ref`, `metric`, `input_n`, `n_variants_used`, `score_col`, `se_col`, `fdr_col`, `stat_col`, `median_abs_z`, `control_set`, `n_controls`, `median_abs_z_controls`, `pct_controls_significant`, `control_sig_basis`, `signal_set`, `n_signal`, `median_abs_z_functional`, `cohens_d_z_signal_vs_control`, `input_file`
+* `<out_prefix>.median_abs_z.png` — a plot of median |Z| by condition, one facet per gene, coloured by metric (positional/adjusted) and shaped by reference (Day4/Plasmid)
+
+#### Notes:
+* Column selection prefers `GMM_status` (from STEP SEVEN) for significance calling, and `combined_LFC`/`combined_SE` (merged, two-guide genes) falling back to `pos_adj_log2FoldChange_raw`/`pos_total_se_raw` (positional, single-guide) or `adj_log2FoldChange_raw`/`lfcSE_raw` (adjusted, single-guide).
+* If a file's metric (positional/adjusted) can't be determined from the filename, the script stops with an error listing the offending file(s) — fix the filename, adjust the regex flags, or use `--manifest`.
+* If a file's reference (Day4/Plasmid) can't be determined, it's labelled `"Other"`, a warning is printed, and it's still processed but won't appear in the standard Day4/Plasmid comparisons.
+* `glob2rx`-based filename matching does not support brace expansion (e.g. `"{CTCF,DDX3X}"`) — list genes explicitly in the path, or run per gene and combine the resulting `.metrics.tsv` files afterward.
+
