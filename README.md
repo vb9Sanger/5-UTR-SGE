@@ -278,6 +278,86 @@ This set of protocols follows a No-weekend protocol following the schedule speci
 --- 
 
 ## Data Analysis 
-  
 
+### Background:
+Downstream analysis of SGE screening data is performed using the established Sanger **sge-metapipeline**, which wraps sample retrieval (iRODS to lustre), quantification (QUANTS) and QC (MAVEQC) into a single pipeline.
+
+* Full pipeline repo: [sge_production_screen_qc](https://gitlab.internal.sanger.ac.uk/team302/sge/sge_production_screen_qc/-/tree/feature/run46503_Jan2023?ref_type=heads)
+* QUANTS output docs: [QUANTS output.md](https://github.com/cancerit/QUANTS/blob/develop/docs/output.md), [pyQUEST](https://github.com/cancerit/pyQUEST)
+* Example `meta.csv`, `meta_consequence.tsv` and `config.ini` files: `/lustre/scratch124/humgen/projects_v2/5utr_sge/users/vb9/sge_analysis/files_to_run_metapipeline/logs`
+
+--- 
+### STEP ONE: Load the sge-metapipeline
+
+#### Requirements:
+* Access to the `HGI/common/sge-metapipeline` module
+
+#### Running the script:
+Run: 
+```bash
+module load HGI/common/sge-metapipeline/v0.1.1
+```
+
+Once loaded, there are two basic commands, `fetch` and `execute`, each with a `--help` option:
+```bash
+sge-metapipeline fetch --help
+sge-metapipeline execute --help
+```
+
+#### Notes:
+* `fetch` retrieves sample information from the MLWH and creates the initial Sample Manifest
+* `execute` runs the `irods_to_lustre`, `QUANTS` and `MAVEQC` sub-commands
+
+--- 
+### STEP TWO: Fetch sample manifest and run iRODS to lustre
+
+#### Requirements:
+* Study ID and run ID for the samples of interest
+* `config.ini` file with warehouse credentials
+
+#### Running the script:
+First, load the iRODS module and initiate a session:
+```bash
+module load ISG/IRODS/1.0
+iinit
+```
+*`iinit` will prompt you to enter your Sanger password.*
+
+Fetch sample information from the MLWH (example):
+```bash
+sge-metapipeline fetch --study-id 7885 --run-id 49656 --warehouse-creds config.ini
+```
+Modify the resulting `manifest_fetched.tsv` if needed, to include only the desired samples.
+
+Then run iRODS to lustre (example):
+```bash
+module load badger/samtools/1.20
+sge-metapipeline execute irods_to_lustre --manifest-file manifest_fetched.tsv --output irods_to_lustre --pipeline-config config.ini
+```
+
+#### Output:
+`manifest_fetched.irods_to_lustre.tsv`, along with merged cram/fastq files on lustre, to be used as input for QUANTS.
+
+#### Notes:
+* You may need to load `samtools` (`badger/samtools/1.20`) before running `irods_to_lustre`
+
+--- 
+### STEP THREE: Run QUANTS
+
+#### Requirements:
+* `meta.csv` file (see example file location above)
+* `manifest_fetched.irods_to_lustre.tsv`, populated with the path to the `meta.csv` file
+* pipeline `config.ini` file
+
+#### Running the script:
+Run (example):
+```bash
+sge-metapipeline execute QUANTS --manifest-file irods_to_lustre/sg5_manifest_fetched.irods_to_lustre.tsv --output sg5_SLC2A1_QUANTS --pipeline-config sge_metapipeline_vb9.config.ini
+```
+
+#### Output:
+See expected output structure: [QUANTS output.md](https://github.com/cancerit/QUANTS/blob/develop/docs/output.md), [pyQUEST](https://github.com/cancerit/pyQUEST)
+
+--- 
+### STEP FOUR: Run MAVEQC
   
