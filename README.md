@@ -584,3 +584,94 @@ CTCF	START_Insertion
 * If a file's reference (Day4/Plasmid) can't be determined, it's labelled `"Other"`, a warning is printed, and it's still processed but won't appear in the standard Day4/Plasmid comparisons.
 * `glob2rx`-based filename matching does not support brace expansion (e.g. `"{CTCF,DDX3X}"`) — list genes explicitly in the path, or run per gene and combine the resulting `.metrics.tsv` files afterward.
 
+--- 
+### STEP NINE: Extract VEP/SpliceAI/UTRAnnotator annotations
+
+#### Background:
+On the optimal timepoint/reference/guide-combination selected from STEP EIGHT, extracts SpliceAI and UTRAnnotator annotations from VEP-annotated VCF(s) and merges them into the existing annotation TSV, keyed on a shared variant identifier.
+
+#### Requirements:
+* Python package: `pandas`
+* One or two VEP-annotated VCF(s) (one per guide), with a `CSQ` INFO field including `SpliceAI_pred_DS_AG`/`DS_AL`/`DS_DG`/`DS_DL` and `5UTR_consequence`/`5UTR_annotation` sub-fields, and an ID column of the form `<transcript>_sg<N>_<variant_key>`
+* An existing annotation TSV containing a variant identifier column matching the VCFs' embedded variant key (default column name: `variant_key`)
+* [extract_vep_annotations.py](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/extract_vep_annotations.py)
+
+| Flag | Required? | Description |
+| :--- | :--- | :--- |
+| `--vcf1 <file.vcf>` | Yes | First VEP-annotated VCF (e.g. sg7) |
+| `--vcf2 <file.vcf>` | No | Second VEP-annotated VCF (e.g. sg8). Omit entirely for single-guide genes (e.g. SON) |
+| `--tsv <file.tsv>` | Yes | Existing annotation TSV to merge annotations into |
+| `--out <file.tsv>` | Yes | Output TSV path |
+| `--key_col <name>` | No | Column in `--tsv` holding the variant identifier (default: `variant_key`) |
+
+Run (two guides, example):
+```bash
+python Code/extract_vep_annotations.py --vcf1 path/to/gene_sg7_vep.vcf --vcf2 path/to/gene_sg8_vep.vcf --tsv path/to/merged_annotated.tsv --out path/to/output_annotated.tsv
+```
+
+Run (single guide, e.g. SON — omit `--vcf2`):
+```bash
+python Code/extract_vep_annotations.py --vcf1 path/to/SON_sgX_vep.vcf --tsv path/to/SON_extracted_annotated.tsv --out path/to/SON_output_annotated.tsv
+```
+
+#### Output:
+* The specified `--out` TSV: the input `--tsv`, left-joined with `spliceai_delta` (max of the 4 SpliceAI delta scores across transcripts; 0–1, ≥0.2 potentially pathogenic, ≥0.5 high-confidence), `utr_consequence` and `utr_annotation` (from UTRAnnotator).
+* Console output reporting how many variants were parsed per VCF, any UTR consequence discrepancies between the two guide VCFs (see Notes), and final coverage (% non-null `spliceai_delta`/`utr_consequence` in the output).
+
+#### Notes:
+* When two VCFs are given, `spliceai_delta` takes the max across both (conservative; in practice identical since SpliceAI scores are position-based, not guide-dependent).
+* When two VCFs are given and their `utr_consequence`/`utr_annotation` differ, the sg8 (`--vcf2`) value is preferred and a discrepancy is logged to the console for auditing; `utr_consequence` should always agree in practice, and `utr_annotation` differences are usually just key-ordering, not semantic differences.
+
+--- 
+### STEP TEN: Annotate UTR-specific variant features
+
+#### Background:
+Adds UTR-specific structural annotations to the output of STEP NINE — gained-ATG position/frame, Kozak strength/score of any gained start, uORF/oORF/start-stop creation, and disruption of the endogenous CDS Kozak context — using a per-gene sequence configuration (`TARGET_CONFIGS`) hardcoded in the script for `DDX3X`, `SLC2A1`, `SON` and `CTCF`.
+
+#### Requirements:
+* R packages: `readr`, `dplyr`, `stringr`, `purrr`, `tibble`; optionally `Biostrings` (for Kozak scoring — if unavailable, Kozak scores are returned as `NA` rather than erroring)
+* Input TSV containing `variant_key` and `consequence`, plus **either**:
+  * `oligo_name` and `sequence` (single-sequence input), **or**
+  * `oligo_name1`/`sequence1` and `oligo_name2`/`sequence2` (merged two-guide input from STEP SIX's `merge_and_combine.R`)
+* [annotate_UTR.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/annotate_UTR.R)
+
+#### Running the script:
+Positional arguments only (no flags): `<input.tsv> <output.tsv> <target_name>`, where `target_name` is one of `DDX3X`, `SLC2A1`, `SON`, `CTCF`.
+
+Run (example):
+```bash
+Rscript Code/annotate_UTR.R input.tsv output.tsv SLC2A1
+```
+
+#### Output:
+The specified `<output.tsv>`: all input columns, plus `is_utr_variant`, `is_start_insertion`, `inserted_kozak_strength`, `gained_start_pos`, `gained_start_frame`, `gained_start_kozak15`, `gained_start_kozak_score`, `gained_atg`, `creates_startstop`, `creates_uorf`, `uorf_seq`, `creates_oorf`, `oorf_seq`, `disrupts_endogenous_kozak`, `endogenous_kozak_alt15`, `endogenous_kozak_alt_score`, `annotation_source` (`"sequence1"` or `"sequence2"`, recording which reference context was used per row), and `final_status` (added last, taking the first non-missing value from `GMM_status` → `combined_status` → `stat_pos_raw` → `stat_adj_raw`).
+
+#### Notes:
+* Gene-specific sequence contexts (WT UTR sequence, CDS/upstream/downstream anchors, canonical Kozak 15-mer) are hardcoded in the script's `TARGET_CONFIGS` — adding a new gene means adding a new entry there, not a CLI option.
+* For merged two-guide input, `sequence2`'s reference context is preferred whenever `sequence2` is present, falling back to `sequence1`'s context otherwise.
+* `SLC2A1` is special-cased for single-sequence input: rows are matched to the sg5 vs sg6 reference context based on whether `"sg5"`/`"sg6"` appears in `oligo_name`.
+
+--- 
+### STEP ELEVEN (optional — targetons with a known endogenous uORF only): Assess endogenous uORF disruption
+
+#### Background:
+For targetons with a known, validated endogenous uORF, assesses whether each variant disrupts it (lost start codon, loss of the in-frame stop, or a shortened/lengthened ORF) relative to the WT sequence. Currently only configured for **CTCF** (`DDX3X`'s endogenous start is a non-ATG/GTG with no strong evidence of translation, so there's no reliable endogenous uORF to check disruption against, and it isn't in this script's config).
+
+#### Requirements:
+* R packages: `readr`, `dplyr`, `stringr`, `tibble`
+* Output TSV from STEP TEN (`annotate_UTR.R`) — specifically relies on its `annotation_source` column (`"sequence1"`/`"sequence2"`) to pick the correct reference context per row, so this step should run **after** STEP TEN
+* [annotate_endogenous_uorf.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/annotate_endogenous_uorf.R)
+
+#### Running the script:
+Positional arguments only (no flags): `<input.tsv> <output.tsv> <target>`, where `target` must currently be `CTCF`.
+
+Run (example):
+```bash
+Rscript Code/annotate_endogenous_uorf.R CTCF_annotated.tsv CTCF_with_uorf_status.tsv CTCF
+```
+
+#### Output:
+The specified `<output.tsv>`: all input columns, plus `endogenous_uorf_status` (one of `wt_start_not_found`, `start_lost`, `no_inframe_stop`, `shortened`, `lengthened`, `intact`), `uorf_disrupting` (`TRUE` for all but `intact`/`wt_start_not_found`), `endogenous_uorf_wt_seq`, `endogenous_uorf_alt_seq`, and `final_status` (added if not already present, using the same `GMM_status` → `combined_status` → `stat_pos_raw` → `stat_adj_raw` priority as STEP TEN).
+
+#### Notes:
+* Only genes present in the script's `TARGET_CONFIGS` (currently just `CTCF`) can be run — the script errors immediately for any other `target`.
