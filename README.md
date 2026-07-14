@@ -501,16 +501,16 @@ Rscript Code/extract_single_guide.R -f SON/Plasmid_ref/sg10/output/experiment_qc
 ### STEP SIX: Fit a Gaussian Mixture Model
 
 #### Background:
-Fits a 2-component Gaussian Mixture Model (via `mclust`) to the combined or extracted LFC values from STEP SIX, to classify variants as **depleted** or **no impact** (enriched variants are left unchanged).
+Fits a 2-component Gaussian Mixture Model (via `mclust`) to the combined or extracted LFC values from STEP FIVE, to classify variants as **depleted** or **no impact** (enriched variants are left unchanged).
 
 #### Requirements:
 * R packages: `data.table`, `mclust`, `ggplot2`, `ragg`
-* the combined (`merge_and_combine.R`) or extracted (`extract_single_guide.R`) output TSV from STEP SIX
+* the combined (`merge_and_combine.R`) or extracted (`extract_single_guide.R`) output TSV from STEP FIVE
 * [gmm.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/gmm.R)
 
 | Flag | Required? | Description |
 | :--- | :--- | :--- |
-| `-f <input.tsv>` | Yes | Combined or single-guide results TSV from STEP SIX |
+| `-f <input.tsv>` | Yes | Combined or single-guide results TSV from STEP FIVE |
 | `-o <output.tsv>` | No | Output TSV (default: `<input_basename>_with_GMM.tsv`, same directory as input) |
 | `--lfc_col <name>` | No | LFC column to fit on (auto-detected if omitted: `combined_LFC`, or one of the `adj_log2FoldChange_*`/`pos_adj_log2FoldChange_*` columns) |
 | `--status_col <name>` | No | Status column to use (auto-detected from `--lfc_col` if omitted) |
@@ -535,13 +535,13 @@ Rscript Code/gmm.R -f SLC2A1/D4_ref/merged_positional/SLC2A1_merged_positional_D
 ### STEP SEVEN: Signal-to-noise QC across genes/conditions 
 
 #### Background:
-Reports per-file signal-to-noise QC metrics (median |Z|, % controls significant, Cohen's d between signal and control consequence sets) across all `*_with_GMM.tsv` outputs from STEP SEVEN, combined into a single table so gene x condition combinations (e.g. `Day4_positional`, `Day4_adjusted`, `Plasmid_positional`) can be compared by eye. There is deliberately **no automatic composite score or ranking** — a hierarchical rank across adjusted vs positional metrics isn't a fair like-for-like comparison, so manual inspection of the combined table/plot is intended instead.
+Reports per-file signal-to-noise QC metrics (median |Z|, % controls significant, Cohen's d between signal and control consequence sets) across all `*_with_GMM.tsv` outputs from STEP SIX, combined into a single table so gene x condition combinations (e.g. `Day4_positional`, `Day4_adjusted`, `Plasmid_positional`) can be compared by eye. There is deliberately **no automatic composite score or ranking** — a hierarchical rank across adjusted vs positional metrics isn't a fair like-for-like comparison, so manual inspection of the combined table/plot is intended instead.
 
 Gene, reference (Day4/Plasmid) and metric (positional/adjusted) are auto-inferred per file from the filename/path (not passed via a single global flag, since one run compares all conditions together), and can be overridden per file or per gene via `--manifest`.
 
 #### Requirements:
 * R packages: `data.table`, `ggplot2`, `optparse`
-* `*_with_GMM.tsv` output file(s) from STEP SEVEN, each containing a `consequence` column
+* `*_with_GMM.tsv` output file(s) from STEP SIX, each containing a `consequence` column
 * [signal_to_noise.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/signal_to_noise.R)
 
 | Flag | Required? | Description |
@@ -585,7 +585,7 @@ CTCF	START_Insertion
 * `<out_prefix>.median_abs_z.png` — a plot of median |Z| by condition, one facet per gene, coloured by metric (positional/adjusted) and shaped by reference (Day4/Plasmid)
 
 #### Notes:
-* Column selection prefers `GMM_status` (from STEP SEVEN) for significance calling, and `combined_LFC`/`combined_SE` (merged, two-guide genes) falling back to `pos_adj_log2FoldChange_raw`/`pos_total_se_raw` (positional, single-guide) or `adj_log2FoldChange_raw`/`lfcSE_raw` (adjusted, single-guide).
+* Column selection prefers `GMM_status` (from STEP SIX) for significance calling, and `combined_LFC`/`combined_SE` (merged, two-guide genes) falling back to `pos_adj_log2FoldChange_raw`/`pos_total_se_raw` (positional, single-guide) or `adj_log2FoldChange_raw`/`lfcSE_raw` (adjusted, single-guide).
 * If a file's metric (positional/adjusted) can't be determined from the filename, the script stops with an error listing the offending file(s) — fix the filename, adjust the regex flags, or use `--manifest`.
 * If a file's reference (Day4/Plasmid) can't be determined, it's labelled `"Other"`, a warning is printed, and it's still processed but won't appear in the standard Day4/Plasmid comparisons.
 * `glob2rx`-based filename matching does not support brace expansion (e.g. `"{CTCF,DDX3X}"`) — list genes explicitly in the path, or run per gene and combine the resulting `.metrics.tsv` files afterward.
@@ -594,7 +594,7 @@ CTCF	START_Insertion
 ### STEP EIGHT: Extract VEP/SpliceAI/UTRAnnotator annotations
 
 #### Background:
-On the optimal timepoint/reference/guide-combination selected from STEP EIGHT, extracts SpliceAI and UTRAnnotator annotations from VEP-annotated VCF(s) and merges them into the existing annotation TSV, keyed on a shared variant identifier.
+On the optimal timepoint/reference/guide-combination selected from STEP SEVEN, extracts SpliceAI and UTRAnnotator annotations from VEP-annotated VCF(s) and merges them into the existing annotation TSV, keyed on a shared variant identifier.
 
 #### Requirements:
 * Python package: `pandas`
@@ -632,13 +632,13 @@ python Code/extract_vep_annotations.py --vcf1 path/to/SON_sgX_vep.vcf --tsv path
 ### STEP NINE: Annotate UTR-specific variant features
 
 #### Background:
-Adds UTR-specific structural annotations to the output of STEP NINE — gained-ATG position/frame, Kozak strength/score of any gained start, uORF/oORF/start-stop creation, and disruption of the endogenous CDS Kozak context — using a per-gene sequence configuration (`TARGET_CONFIGS`) hardcoded in the script for `DDX3X`, `SLC2A1`, `SON` and `CTCF`.
+Adds UTR-specific structural annotations to the output of STEP EIGHT — gained-ATG position/frame, Kozak strength/score of any gained start, uORF/oORF/start-stop creation, and disruption of the endogenous CDS Kozak context — using a per-gene sequence configuration (`TARGET_CONFIGS`) hardcoded in the script for `DDX3X`, `SLC2A1`, `SON` and `CTCF`.
 
 #### Requirements:
 * R packages: `readr`, `dplyr`, `stringr`, `purrr`, `tibble`; optionally `Biostrings` (for Kozak scoring — if unavailable, Kozak scores are returned as `NA` rather than erroring)
 * Input TSV containing `variant_key` and `consequence`, plus **either**:
   * `oligo_name` and `sequence` (single-sequence input), **or**
-  * `oligo_name1`/`sequence1` and `oligo_name2`/`sequence2` (merged two-guide input from STEP SIX's `merge_and_combine.R`)
+  * `oligo_name1`/`sequence1` and `oligo_name2`/`sequence2` (merged two-guide input from STEP FIVE's `merge_and_combine.R`)
 * [annotate_UTR.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/annotate_UTR.R)
 
 #### Running the script:
@@ -665,7 +665,7 @@ For targetons with a known, validated endogenous uORF, assesses whether each var
 
 #### Requirements:
 * R packages: `readr`, `dplyr`, `stringr`, `tibble`
-* Output TSV from STEP TEN (`annotate_UTR.R`) — specifically relies on its `annotation_source` column (`"sequence1"`/`"sequence2"`) to pick the correct reference context per row, so this step should run **after** STEP TEN
+* Output TSV from STEP NINE (`annotate_UTR.R`) — specifically relies on its `annotation_source` column (`"sequence1"`/`"sequence2"`) to pick the correct reference context per row, so this step should run **after** STEP NINE
 * [annotate_endogenous_uorf.R](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/annotate_endogenous_uorf.R)
 
 #### Running the script:
@@ -677,7 +677,7 @@ Rscript Code/annotate_endogenous_uorf.R CTCF_annotated.tsv CTCF_with_uorf_status
 ```
 
 #### Output:
-The specified `<output.tsv>`: all input columns, plus `endogenous_uorf_status` (one of `wt_start_not_found`, `start_lost`, `no_inframe_stop`, `shortened`, `lengthened`, `intact`), `uorf_disrupting` (`TRUE` for all but `intact`/`wt_start_not_found`), `endogenous_uorf_wt_seq`, `endogenous_uorf_alt_seq`, and `final_status` (added if not already present, using the same `GMM_status` → `combined_status` → `stat_pos_raw` → `stat_adj_raw` priority as STEP TEN).
+The specified `<output.tsv>`: all input columns, plus `endogenous_uorf_status` (one of `wt_start_not_found`, `start_lost`, `no_inframe_stop`, `shortened`, `lengthened`, `intact`), `uorf_disrupting` (`TRUE` for all but `intact`/`wt_start_not_found`), `endogenous_uorf_wt_seq`, `endogenous_uorf_alt_seq`, and `final_status` (added if not already present, using the same `GMM_status` → `combined_status` → `stat_pos_raw` → `stat_adj_raw` priority as STEP NINE).
 
 #### Notes:
 * Only genes present in the script's `TARGET_CONFIGS` (currently just `CTCF`) can be run — the script errors immediately for any other `target`.
