@@ -67,6 +67,15 @@
 #   Rscript signal_to_noise.R --input "*_with_GMM.tsv" --manifest ctcf_override.tsv \
 #     --out_prefix out/utr_signal_noise --control "SNV" --signal "LOF"
 #
+#   # Further restrict CTCF's signal set to only strong-Kozak-context start
+#   # insertions (consequence alone doesn't distinguish Kozak strength - that
+#   # lives in variant_key, e.g. "...StrongKozak..."), by adding a
+#   # signal_key_pattern column to the same manifest:
+#   #   gene<TAB>signal_set<TAB>signal_key_pattern
+#   #   CTCF<TAB>START_Insertion<TAB>StrongKozak
+#   Rscript signal_to_noise.R --input "*_with_GMM.tsv" --manifest ctcf_override.tsv \
+#     --out_prefix out/utr_signal_noise --control "SNV" --signal "LOF"
+#
 #   # If the current directory also has unrelated files/folders (e.g. an
 #   # SLC2A1 folder from a different project), check with --dry_run first;
 #   # if it picks up files you don't want, point --input at a narrower base
@@ -164,7 +173,8 @@ infer_metric <- function(path, positional_regex, adjusted_regex) {
 
 build_file_metadata <- function(files, gene_regex, day4_regex, plasmid_regex,
                                 positional_regex, adjusted_regex, manifest_path,
-                                default_control_str, default_signal_str) {
+                                default_control_str, default_signal_str,
+                                default_signal_key_pattern = "") {
   meta <- data.table(
     file          = files,
     gene          = vapply(files, infer_gene, character(1), gene_regex = gene_regex),
@@ -172,8 +182,9 @@ build_file_metadata <- function(files, gene_regex, day4_regex, plasmid_regex,
                            day4_regex = day4_regex, plasmid_regex = plasmid_regex),
     metric        = vapply(files, infer_metric, character(1),
                            positional_regex = positional_regex, adjusted_regex = adjusted_regex),
-    control_set_str = default_control_str,
-    signal_set_str  = default_signal_str
+    control_set_str      = default_control_str,
+    signal_set_str        = default_signal_str,
+    signal_key_pattern    = default_signal_key_pattern
   )
 
   # Manifest rows can target a specific file (col "file") OR an entire gene
@@ -213,6 +224,8 @@ build_file_metadata <- function(files, gene_regex, day4_regex, plasmid_regex,
       if ("metric"      %in% names(man) && nzchar(man$metric[i]))        meta$metric[idx]          <- man$metric[i]
       if ("control_set" %in% names(man) && nzchar(man$control_set[i]))   meta$control_set_str[idx] <- man$control_set[i]
       if ("signal_set"  %in% names(man) && nzchar(man$signal_set[i]))    meta$signal_set_str[idx]  <- man$signal_set[i]
+      if ("signal_key_pattern" %in% names(man) && nzchar(man$signal_key_pattern[i]))
+        meta$signal_key_pattern[idx] <- man$signal_key_pattern[i]
     }
   }
 
@@ -302,6 +315,7 @@ cohens_d <- function(x_signal, x_control) {
 
 summarise_file <- function(dt, gene, ref, metric, condition,
                            control_set, signal_set,
+                           signal_key_pattern = "",
                            fdr_cutoff  = 0.05,
                            min_n_for_d = 10) {
 
@@ -324,6 +338,17 @@ summarise_file <- function(dt, gene, ref, metric, condition,
 
   xc <- x[consequence %in% control_set]
   xs <- x[consequence %in% signal_set]
+
+  # Optional additional filter on the signal set, matched against variant_key
+  # (e.g. restricting CTCF's START_Insertion signal set to only the
+  # strong-Kozak-context variants, whose variant_key contains "StrongKozak",
+  # since the consequence label alone does not distinguish Kozak strength).
+  if (nzchar(signal_key_pattern)) {
+    if (!("variant_key" %in% names(xs))) {
+      stop("signal_key_pattern was supplied but input has no 'variant_key' column.")
+    }
+    xs <- xs[grepl(signal_key_pattern, variant_key, ignore.case = TRUE)]
+  }
 
   n_controls              <- nrow(xc)
   n_signal                <- nrow(xs)
@@ -371,6 +396,7 @@ summarise_file <- function(dt, gene, ref, metric, condition,
     control_sig_basis        = control_sig_basis,
 
     signal_set                    = paste(signal_set, collapse = ","),
+    signal_key_pattern             = ifelse(nzchar(signal_key_pattern), signal_key_pattern, NA_character_),
     n_signal                      = n_signal,
     median_abs_z_functional       = median_abs_z_functional,
     cohens_d_z_signal_vs_control  = d,
@@ -395,9 +421,12 @@ opt_list <- list(
                 "'file' (match a specific file, by exact path or basename) and/or ",
                 "'gene' (match ALL files already inferred as this gene - convenient ",
                 "for setting one gene's signal_set/control_set at once). Optional ",
-                "override columns: gene, ref, metric, control_set, signal_set ",
-                "(comma-separated consequence labels, e.g. for CTCF's lack of LOF ",
-                "variants: gene=CTCF, signal_set=START_Insertion)"
+                "override columns: gene, ref, metric, control_set, signal_set, ",
+                "signal_key_pattern (comma-separated consequence labels for ",
+                "control_set/signal_set, e.g. for CTCF's lack of LOF variants: ",
+                "gene=CTCF, signal_set=START_Insertion; signal_key_pattern is a ",
+                "regex/substring matched against variant_key, applied on top of ",
+                "signal_set, e.g. signal_key_pattern=StrongKozak)"
               )),
   make_option(c("--dry_run"), action = "store_true", default = FALSE,
               help = "Print inferred (gene, ref, metric, condition) per file and exit, without computing metrics"),
@@ -417,6 +446,16 @@ opt_list <- list(
               help = "Comma-separated neutral/control consequence labels; global default, override per-gene via --manifest [default %default]"),
   make_option(c("--signal"), type = "character", default = "LOF",
               help = "Comma-separated signal consequence labels used for Cohen's d; global default, override per-gene via --manifest [default %default]"),
+  make_option(c("--signal_key_pattern"), type = "character", default = "",
+              help = paste0(
+                "Optional regex/substring matched against variant_key, applied as an ",
+                "ADDITIONAL filter on top of --signal (consequence-based). Global ",
+                "default is empty (no extra filtering); override per-gene via ",
+                "--manifest's signal_key_pattern column, e.g. for CTCF: ",
+                "gene=CTCF, signal_key_pattern=StrongKozak, to restrict its ",
+                "START_Insertion signal set to strong-Kozak-context variants only ",
+                "[default none]"
+              )),
   make_option(c("--fdr_cutoff"), type = "double", default = 0.05,
               help = "FDR cutoff for fallback significance calling [default %default]"),
   make_option(c("--min_n_for_d"), type = "integer", default = 10,
@@ -441,13 +480,15 @@ meta <- build_file_metadata(
   adjusted_regex      = opt$metric_adjusted_regex,
   manifest_path       = opt$manifest,
   default_control_str = opt$control,
-  default_signal_str  = opt$signal
+  default_signal_str  = opt$signal,
+  default_signal_key_pattern = opt$signal_key_pattern
 )
 
 message("Inferred metadata per file:")
 print(
   meta[, .(file = basename(file), gene, ref, metric, condition,
-           control_set = control_set_str, signal_set = signal_set_str)],
+           control_set = control_set_str, signal_set = signal_set_str,
+           signal_key_pattern)],
   row.names = FALSE
 )
 
@@ -491,6 +532,7 @@ for (i in seq_len(nrow(meta))) {
     condition   = meta$condition[i],
     control_set = parse_csv_arg(meta$control_set_str[i]),
     signal_set  = parse_csv_arg(meta$signal_set_str[i]),
+    signal_key_pattern = meta$signal_key_pattern[i],
     fdr_cutoff  = opt$fdr_cutoff,
     min_n_for_d = opt$min_n_for_d
   )
