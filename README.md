@@ -591,43 +591,49 @@ CTCF	START_Insertion
 * `glob2rx`-based filename matching does not support brace expansion (e.g. `"{CTCF,DDX3X}"`) — list genes explicitly in the path, or run per gene and combine the resulting `.metrics.tsv` files afterward.
 
 --- 
-### STEP EIGHT: Extract VEP/SpliceAI/UTRAnnotator annotations
-
+### STEP EIGHT: Extract VEP/SpliceAI/Pangolin/UTRAnnotator annotations
 #### Background:
-On the optimal timepoint/reference/guide-combination selected from STEP SEVEN, extracts SpliceAI and UTRAnnotator annotations from VEP-annotated VCF(s) and merges them into the existing annotation TSV, keyed on a shared variant identifier.
-
+On the optimal timepoint/reference/guide-combination selected from STEP SEVEN, extracts SpliceAI and UTRAnnotator annotations from VEP-annotated VCF(s) and merges them into the existing annotation TSV, keyed on a shared variant identifier. For genes with no SpliceAI coverage (e.g. SON), Pangolin scores can be extracted instead from a flat, pre-split VEP TSV.
 #### Requirements:
 * Python package: `pandas`
-* One or two VEP-annotated VCF(s) (one per guide), with a `CSQ` INFO field including `SpliceAI_pred_DS_AG`/`DS_AL`/`DS_DG`/`DS_DL` and `5UTR_consequence`/`5UTR_annotation` sub-fields, and an ID column of the form `<transcript>_sg<N>_<variant_key>`
-* An existing annotation TSV containing a variant identifier column matching the VCFs' embedded variant key (default column name: `variant_key`)
+* **VCF mode:** One or two VEP-annotated VCF(s) (one per guide), with a `CSQ` INFO field including `SpliceAI_pred_DS_AG`/`DS_AL`/`DS_DG`/`DS_DL` and `5UTR_consequence`/`5UTR_annotation` sub-fields, and an ID column of the form `<transcript>_sg<N>_<variant_key>`
+* **Pangolin mode** (genes with no SpliceAI data, e.g. SON): a flat, already-split-VEP TSV (e.g. via `bcftools +split-vep`; one row per variant, CSQ sub-fields already split into columns) with `pangolin_gain_score`/`pangolin_gain_pos`/`pangolin_loss_score`/`pangolin_loss_pos` and `_5UTR_consequence`/`_5UTR_annotation` columns, and an `ID` column of the same `<transcript>_sg<N>_<variant_key>` form
+* An existing annotation TSV containing a variant identifier column matching the embedded variant key (default column name: `variant_key`)
 * [extract_vep_annotations.py](https://github.com/vb9Sanger/5-UTR-SGE/blob/main/Code/extract_vep_annotations.py)
 
 | Flag | Required? | Description |
 | :--- | :--- | :--- |
-| `--vcf1 <file.vcf>` | Yes | First VEP-annotated VCF (e.g. sg7) |
+| `--vcf1 <file.vcf>` | Yes* | First VEP-annotated VCF (e.g. sg7). Mutually exclusive with `--pangolin_tsv` |
 | `--vcf2 <file.vcf>` | No | Second VEP-annotated VCF (e.g. sg8). Omit entirely for single-guide genes (e.g. SON) |
+| `--pangolin_tsv <file.tsv>` | Yes* | Flat split-VEP TSV with Pangolin + UTRAnnotator columns, for genes with no SpliceAI coverage (e.g. SON). Mutually exclusive with `--vcf1`/`--vcf2` |
 | `--tsv <file.tsv>` | Yes | Existing annotation TSV to merge annotations into |
 | `--out <file.tsv>` | Yes | Output TSV path |
 | `--key_col <name>` | No | Column in `--tsv` holding the variant identifier (default: `variant_key`) |
+
+*Either `--vcf1` (optionally with `--vcf2`) or `--pangolin_tsv` must be provided, but not both.
 
 Run (two guides, example):
 ```bash
 python Code/extract_vep_annotations.py --vcf1 path/to/gene_sg7_vep.vcf --vcf2 path/to/gene_sg8_vep.vcf --tsv path/to/merged_annotated.tsv --out path/to/output_annotated.tsv
 ```
-
 Run (single guide, e.g. SON — omit `--vcf2`):
 ```bash
 python Code/extract_vep_annotations.py --vcf1 path/to/SON_sgX_vep.vcf --tsv path/to/SON_extracted_annotated.tsv --out path/to/SON_output_annotated.tsv
 ```
-
+Run (Pangolin mode, e.g. SON with no SpliceAI coverage):
+```bash
+python Code/extract_vep_annotations.py --pangolin_tsv path/to/SON_sg10_splitvep_pangolin.tsv --tsv path/to/SON_extracted_annotated.tsv --out path/to/SON_output_annotated.tsv
+```
 #### Output:
-* The specified `--out` TSV: the input `--tsv`, left-joined with `spliceai_delta` (max of the 4 SpliceAI delta scores across transcripts; 0–1, ≥0.2 potentially pathogenic, ≥0.5 high-confidence), `utr_consequence` and `utr_annotation` (from UTRAnnotator).
-* Console output reporting how many variants were parsed per VCF, any UTR consequence discrepancies between the two guide VCFs (see Notes), and final coverage (% non-null `spliceai_delta`/`utr_consequence` in the output).
-
+* The specified `--out` TSV: the input `--tsv`, left-joined with:
+  * **VCF mode:** `spliceai_delta` (max of the 4 SpliceAI delta scores across transcripts; 0–1, ≥0.2 potentially pathogenic, ≥0.5 high-confidence), `utr_consequence` and `utr_annotation` (from UTRAnnotator).
+  * **Pangolin mode:** `pangolin_delta` (max of `abs(gain_score)`/`abs(loss_score)`; same 0–1 scale convention as `spliceai_delta`), plus the raw signed `pangolin_gain_score`, `pangolin_gain_pos`, `pangolin_loss_score`, `pangolin_loss_pos` for auditing, and `utr_consequence`/`utr_annotation` (from UTRAnnotator).
+  * `spliceai_delta` and `pangolin_delta` are never both populated for the same gene — a gene is run in one mode or the other, not merged across the two.
+* Console output reporting how many variants were parsed, any UTR consequence discrepancies between the two guide VCFs (VCF mode only — see Notes), and final coverage (% non-null `spliceai_delta`/`pangolin_delta` and `utr_consequence` in the output).
 #### Notes:
 * When two VCFs are given, `spliceai_delta` takes the max across both (conservative; in practice identical since SpliceAI scores are position-based, not guide-dependent).
 * When two VCFs are given and their `utr_consequence`/`utr_annotation` differ, the sg8 (`--vcf2`) value is preferred and a discrepancy is logged to the console for auditing; `utr_consequence` should always agree in practice, and `utr_annotation` differences are usually just key-ordering, not semantic differences.
-
+* Pangolin mode is single-file, single-guide only (no sg7/sg8 discrepancy-resolution step applies) — UTRAnnotator columns are read from the same `--pangolin_tsv` file rather than a separate VCF.
 --- 
 ### STEP NINE: Annotate UTR-specific variant features
 
